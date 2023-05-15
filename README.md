@@ -19,6 +19,11 @@ However, there should be other checks in place, such as checking to make sure th
 var mnemonic = bip39.generateMnemonic()
 // => 'seed sock milk update focus rotate barely fade car face mechanic mercy'
 
+// IETF language tag: ZH_CN, ZH_TW, CS, EN, FR, IT, JA, KO, PT, ES,
+// Generate a japanese mnemonic
+var mnemonicJapanese = bip39.generateMnemonic(language: "JA")
+// => 'まんきつ　しあげ　わかす　きかく　けいれき　たなばた　げんき　ちりょう　かほう　のこぎり　のたまう　きまる'
+
 bip39.mnemonicToSeedHex('basket actual')
 // => String '5cf2d4a8b0355e90295bdfc565a022a409af063d5365bb57bf74d9528f494bfa4400f53d8349b80fdae44082d7f9541e1dba2b003bcfec9d0d53781ca676651f'
 
