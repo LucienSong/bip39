@@ -5,7 +5,7 @@ import 'package:crypto/crypto.dart' show sha256;
 import 'package:hex/hex.dart';
 
 import 'utils/pbkdf2.dart';
-import 'wordlists/english.dart';
+import 'wordlists/wordlists.dart';
 
 const int _SIZE_BYTE = 255;
 const _INVALID_MNEMONIC = 'Invalid mnemonic';
@@ -47,13 +47,15 @@ Uint8List _randomBytes(int size) {
 }
 
 String generateMnemonic(
-    {int strength = 128, RandomBytes randomBytes = _randomBytes}) {
+    {int strength = 128,
+    RandomBytes randomBytes = _randomBytes,
+    String language = 'EN'}) {
   assert(strength % 32 == 0);
   final entropy = randomBytes(strength ~/ 8);
-  return entropyToMnemonic(HEX.encode(entropy));
+  return entropyToMnemonic(HEX.encode(entropy), language: language);
 }
 
-String entropyToMnemonic(String entropyString) {
+String entropyToMnemonic(String entropyString, {String language = 'EN'}) {
   final entropy = Uint8List.fromList(HEX.decode(entropyString));
   if (entropy.length < 16) {
     throw ArgumentError(_INVALID_ENTROPY);
@@ -72,13 +74,17 @@ String entropyToMnemonic(String entropyString) {
       .allMatches(bits)
       .map((match) => match.group(0)!)
       .toList(growable: false);
-  List<String> wordlist = WORDLIST;
+
+  List<String> wordlist = WORDLISTS[language]!;
+  final delimiter = language == "JA" ? "\u{3000}" : "\u{0020}";
   String words =
-      chunks.map((binary) => wordlist[_binaryToByte(binary)]).join(' ');
+      chunks.map((binary) => wordlist[_binaryToByte(binary)]).join(delimiter);
   return words;
 }
 
 Uint8List mnemonicToSeed(String mnemonic, {String passphrase = ""}) {
+  // replace all \u{3000} delimiters with \u{0020} (in case of japanese mnemonic)
+  mnemonic = mnemonic.replaceAll("\u{3000}", "\u{0020}");
   final pbkdf2 = new PBKDF2();
   return pbkdf2.process(mnemonic, passphrase: passphrase);
 }
@@ -98,12 +104,15 @@ bool validateMnemonic(String mnemonic) {
   return true;
 }
 
+// TODO: identify the language used in a mnemonic phrase
+
 String mnemonicToEntropy(mnemonic) {
   var words = mnemonic.split(' ');
   if (words.length % 3 != 0) {
     throw new ArgumentError(_INVALID_MNEMONIC);
   }
-  final wordlist = WORDLIST;
+  // TODO: identify the language used in a mnemonic phrase
+  final wordlist = WORDLISTS['EN']!;
   // convert word indices to 11 bit binary strings
   final bits = words.map((word) {
     final index = wordlist.indexOf(word);

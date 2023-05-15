@@ -83,6 +83,48 @@ void main() {
           });
     });
   });
+
+  test('generateMnemonic for Japanese', () {
+    final entropy = "e2ec2ffb98341117921cbb2c7796f59b";
+    final m = "まんきつ　しあげ　わかす　きかく　けいれき　たなばた　げんき　ちりょう　かほう　のこぎり　のたまう　きまる";
+    var a = bip39.entropyToMnemonic(entropy, language: "JA");
+    expect(a, m);
+  });
+
+  test('generateMnemonic for Spanish', () {
+    final entropy = "e2ec2ffb98341117921cbb2c7796f59b";
+    final m =
+        "teatro ganga yogur chiste dental médula ébano naipe caspa próximo puerta collar";
+    var a = bip39.entropyToMnemonic(entropy, language: "ES");
+    expect(a, m);
+  });
+
+  test('English mnemonicToSeedHex', () {
+    final mnemonic =
+        "title gesture year corn donate mesh embody number cluster royal runway cushion";
+    final m =
+        "e38c7d8b933ee77cba0ac6c6b011973d419ecaba1fd33d903a6a4556f1024b1ea71e77eba80f4df888c6e2553f6586fd0e8c8f51aa95403555f05a8d30eb1552";
+    var a = bip39.mnemonicToSeedHex(mnemonic);
+    expect(a, m);
+  });
+
+  test('Non-English mnemonicToSeedHex', () {
+    final mnemonic =
+        "teatro ganga yogur chiste dental médula ébano naipe caspa próximo puerta collar";
+    final m =
+        "f08dd8875e9701455121977ac0afa520ceda876e33b39545ed186f5546c5e00817ce345586f5e14f57e0519c9e72af74b9708297ecd8aef01693fbcce30eba0e";
+    var a = bip39.mnemonicToSeedHex(mnemonic);
+    expect(a, m);
+  });
+
+  test('Japanese mnemonicToSeedHex', () {
+    final mnemonic =
+        "まんきつ　しあげ　わかす　きかく　けいれき　たなばた　げんき　ちりょう　かほう　のこぎり　のたまう　きまる";
+    final m =
+        "83251e4b61269feb2a1bf9f0a14cbbd0542b0516eeff0ceff1a6b90c156a895d015516f76cdce72b7dc821789da3a4b2af4f8d67ece7de7f7ee121ee348fa806";
+    var a = bip39.mnemonicToSeedHex(mnemonic);
+    expect(a, m);
+  });
 }
 
 void testVector(List<dynamic> v, int i) {
