@@ -74,6 +74,24 @@ void main() {
           reason: 'can vary generated entropy bit length');
     });
 
+    test('can vary entropy length', () {
+      final words = (bip39.generateMnemonic(strength: 192)).split(' ');
+      expect(words.length, equals(18),
+          reason: 'can vary generated entropy bit length');
+    });
+
+    test('can vary entropy length', () {
+      final words = (bip39.generateMnemonic(strength: 224)).split(' ');
+      expect(words.length, equals(21),
+          reason: 'can vary generated entropy bit length');
+    });
+
+    test('can vary entropy length', () {
+      final words = (bip39.generateMnemonic(strength: 256)).split(' ');
+      expect(words.length, equals(24),
+          reason: 'can vary generated entropy bit length');
+    });
+
     test('requests the exact amount of data from an RNG', () {
       bip39.generateMnemonic(
           strength: 160,
@@ -104,6 +122,15 @@ void main() {
         "title gesture year corn donate mesh embody number cluster royal runway cushion";
     final m =
         "e38c7d8b933ee77cba0ac6c6b011973d419ecaba1fd33d903a6a4556f1024b1ea71e77eba80f4df888c6e2553f6586fd0e8c8f51aa95403555f05a8d30eb1552";
+    var a = bip39.mnemonicToSeedHex(mnemonic);
+    expect(a, m);
+  });
+
+  test('English mnemonicToSeedHex', () {
+    final mnemonic =
+        "cricket benefit ugly blame cover goose square vicious cool quick rural shy";
+    final m =
+        "ce6e28dd795d633c4621645a6488bf84a93e336455c3f36681e8b1677f74b7abb5d46ccf9ffbfcd1164e7166b191efbe7135bcf05b07fa61fbe5e64d5182b46a";
     var a = bip39.mnemonicToSeedHex(mnemonic);
     expect(a, m);
   });
