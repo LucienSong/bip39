@@ -104,15 +104,37 @@ bool validateMnemonic(String mnemonic) {
   return true;
 }
 
-// TODO: identify the language used in a mnemonic phrase
+// identify the language used in a mnemonic phrase
+String mnemonicToLanguage(String mnemonic) {
+  final words = mnemonic.split(RegExp(r"[\s+,]"));
+  for (var lang in WORDLISTS.keys) {
+    final wordlist = WORDLISTS[lang]!;
+    var matched = 0;
+    for (var word in words) {
+      if (wordlist.contains(word)) {
+        matched++;
+      }
+    }
+    if (matched == words.length) {
+      return lang;
+    }
+  }
+  return 'UNKNOWN';
+}
 
 String mnemonicToEntropy(mnemonic) {
   var words = mnemonic.split(' ');
   if (words.length % 3 != 0) {
     throw new ArgumentError(_INVALID_MNEMONIC);
   }
-  // TODO: identify the language used in a mnemonic phrase
-  final wordlist = WORDLISTS['EN']!;
+  // identify the language used in a mnemonic phrase
+  // if language is Unknown, throw error
+  final lang = mnemonicToLanguage(mnemonic);
+  if (lang == 'UNKNOWN') {
+    throw new ArgumentError(_INVALID_MNEMONIC);
+  }
+
+  final wordlist = WORDLISTS[lang]!;
   // convert word indices to 11 bit binary strings
   final bits = words.map((word) {
     final index = wordlist.indexOf(word);
